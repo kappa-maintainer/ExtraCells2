@@ -1,21 +1,18 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
-        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url = "https://files.minecraftforge.net/maven/" }
+        maven { url = "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-		classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.0.9'
+        classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
+        classpath "gradle.plugin.com.matthewprenger:CurseGradle:1.4.0"
     }
 }
-
-
-apply plugin: 'scala'
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'idea'
-apply plugin: 'com.matthewprenger.cursegradle'
-
+apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: "com.matthewprenger.cursegradle"
+apply plugin: "scala"
+apply plugin: "idea"
 
 ext.buildProps = file "build.properties"
 
@@ -25,25 +22,21 @@ buildProps.withReader {
     ext.config = new ConfigSlurper().parse prop
 }
 
-version = "${config.version.minecraft}-${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}." + getBuildNumber()
+version = "${config.version.minecraft}-${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}"//." + getBuildNumber()
 group = "extracells"
 archivesBaseName = "ExtraCells"
 def actualVersion = version
 
-
-task outputVersionToFile {
+/*task outputVersionToFile {
 	def versionFile = new File("version.txt")
 	versionFile.write("${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}")
-	
 	def oldVersion = new File("versionOld.txt")
 	if(!oldVersion.exists()) {
 		oldVersion.write("0.0.0")
 	}
-}
-//build.dependsOn outputVersionToFile
+}*/
 
-
-sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = "1.8"
 compileJava {
     sourceCompatibility = targetCompatibility = "1.8"
 }
@@ -53,96 +46,73 @@ logger.lifecycle "" + version
 
 minecraft {
     version = "${config.version.minecraft}-${config.version.forge}"
-    runDir = "../../MinecraftDebug/run_client"
+    runDir = "run"
 	mappings = "${config.version.mappings}"
-	
-	replace '@VERSION@', "${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}"
+    replace "@VERSION@", "${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}"
+    replaceIn "Constants.java"
 }
-	
+
 repositories {
-    maven {
-        name 'Mobius Repo'
-        url "https://www.mobiusstrip.eu/maven"
+	maven {
+        name = "Hwyla"
+        url "https://maven.tehnut.info/"
     }
-	
-	maven {
-		name 'Open Computers'
-		url "https://maven.cil.li/"
-	}
-	
-	maven {
-		name 'prog'
-		url "https://dvs1.progwml6.com/files/maven"
-	}
-	
-	maven {
-        name 'amadornes'
+    maven {
+        name = "CofhAndP455w0rd"
+        url "https://maven.covers1624.net/"
+    }
+    maven {
+        name = "Jei"
+        url "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        name = "MCMultiPart"
         url "https://maven.amadornes.com/"
     }
-
-	maven  {
-		name "BuildCraft Maven"
-		url "https://mod-buildcraft.com/maven"
-	}
-	
-	maven {
-		name = "tehnut"
-		url = "https://tehnut.info/maven"
-	}
-	
-	maven {
-		name = "CoFH Maven"
-		url = "https://maven.covers1624.net"
-	}
-	
-	maven {
-        name = 'IGW'
-        url = "https://maven.k-4u.nl/"
-    }
-
     maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
+        name = "BuildCraft"
+        url "https://mod-buildcraft.com/maven/"
+    }
+    maven {
+        name = "IGW"
+        url "https://maven.k-4u.nl/"
+    }
+    maven {
+        name = "Curse"
+        url "https://www.cursemaven.com/"
+    }
+    maven {
+        name = "OpenComputers"
+        url "https://maven.cil.li/"
     }
 }
 
 dependencies {
-	//compile ("mcp.mobius.waila:Waila:${config.version.waila}"){
-    //    transitive = false
-	//}
-	
-	deobfCompile ("mcp.mobius.waila:Hwyla:${config.version.waila}") {
-		transitive = false
-	}
-	
 	deobfCompile "cofh:RedstoneFlux:${config.version.rf}:universal"
-	
-	compileOnly ("cofh:CoFHCore:${config.version.cofh}:deobf") {
-		transitive = false
-	}
-	
-	//deobfProvided ("li.cil.oc:OpenComputers:${config.version.oc}:api")
-	deobfCompile ("li.cil.oc:OpenComputers:${config.version.oc}")
+    deobfCompile "p455w0rd:AE2WTLib:${config.version.ae2wtlib}"
+    deobfCompile "p455w0rd:p455w0rdslib:${config.version.p455w0rdslib}"
+    deobfCompile "p455w0rd:WirelessCraftingTerminal:${config.version.wct}"
+    deobfCompile "MCMultiPart2:MCMultiPart:${config.version.mcmp}"
+    deobfCompile "li.cil.oc:OpenComputers:${config.version.oc}"
+    deobfCompile "igwmod:IGW-Mod-${config.version.minecraft}:${config.version.igw}:universal"
+    deobfCompile "curse.maven:baubles-227083:${config.version.baubles}"
+    deobfCompile "curse.maven:mekanism-268560:${config.version.mekanism}"
 
-	deobfProvided "mezz.jei:jei_${config.version.minecraft}:${config.version.jei}:api"
-	runtime "mezz.jei:jei_${config.version.minecraft}:${config.version.jei}"
+    deobfProvided "com.mod-buildcraft:buildcraft-api:${config.version.bc}"
+    runtime "com.mod-buildcraft:buildcraft-all:${config.version.bc}"
 
-	deobfProvided "com.mod-buildcraft:buildcraft-api:${config.version.bc}"
-	runtime "com.mod-buildcraft:buildcraft:${config.version.bc}"
-	
-	deobfCompile "igwmod:IGW-Mod-${config.version.minecraft}:${config.version.igw}:universal"
+    deobfProvided "mezz.jei:jei_${config.version.minecraft}:${config.version.jei}:api"
+    runtime "mezz.jei:jei_${config.version.minecraft}:${config.version.jei}"
 
-	deobfCompile "mekanism:Mekanism:${config.version.me}"
-    deobfCompile "p455w0rd:p455w0rdslib:${config.version.pl}"
-    deobfCompile "p455w0rd:AE2WTLib:${config.version.wt}"
-	deobfCompile "p455w0rd:WirelessCraftingTerminal:${config.version.wc}"
-	
-	deobfCompile ("appeng:appliedenergistics2:${config.version.ae}"){
-		transitive = false
-	}
-	
-	deobfCompile "MCMultiPart2:MCMultiPart:${config.version.mcmp}"
-	deobfCompile "baubles:Baubles:1.12:${config.version.baubles}"
+    compileOnly ("cofh:CoFHCore:${config.version.cofhcore}:deobf") {
+        transitive = false
+    }
+    deobfCompile ("mcp.mobius.waila:Hwyla:${config.version.hwyla}") {
+        transitive = false
+    }
+    deobfCompile ("curse.maven:applied-energistics-2-223794:${config.version.ae2}"){
+        transitive = false
+    }
 }
 
 processResources {
@@ -150,15 +120,12 @@ processResources {
         include '**/*.lang'
         include '**/*.info'
         include '**/*.properties'
-
         expand 'version': project.version, 'mcversion': project.minecraft.version
     }
-
     from(sourceSets.main.resources.srcDirs) {
         include '**/*.lang'
         include '**/*.info'
         include '**/*.properties'
-
         expand 'version': "${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}", 'mcversion': project.minecraft.version
     }
 }
@@ -173,22 +140,22 @@ task apiJar(type: Jar) {
 
 if (System.getenv("CURSEFORGE_API_KEY") != null) {
 	curseforge {
-	  apiKey = System.getenv("CURSEFORGE_API_KEY")
-	  project {
-		id = config.cf.project.id
-		addGameVersion config.version.minecraft
-		changelog = file('changelog.txt')
-		releaseType = config.cf.project.type
-		relations {
-			requiredLibrary 'applied-energistics-2'
+		apiKey = System.getenv("CURSEFORGE_API_KEY")
+		project {
+			id = config.cf.project.id
+			addGameVersion config.version.minecraft
+			changelog = file('changelog.txt')
+			releaseType = config.cf.project.type
+			relations {
+				requiredLibrary 'applied-energistics-2'
+			}
+			addArtifact(apiJar) {
+				releaseType = 'alpha'
+			}
+			mainArtifact(jar) {
+				displayName = "$archivesBaseName-${config.version.minecraft}-${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}"
+			}
 		}
-		addArtifact(apiJar) {
-			releaseType = 'alpha'
-		}
-		mainArtifact(jar) {
-			displayName = "$archivesBaseName-${config.version.minecraft}-${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}"
-		}
-	  }
 	}
 }
 
@@ -196,7 +163,7 @@ artifacts {
     archives apiJar
 }
 
-def getBuildNumber() {
+/*def getBuildNumber() {
     if (System.getenv("BUILD_NUMBER") != null) {
         return "${System.getenv("BUILD_NUMBER")}"
     }
@@ -207,10 +174,10 @@ def getBuildNumber() {
         return "${System.getenv("APPVEYOR_BUILD_NUMBER")}"
     }
     return "NIGHTLY"
-}
+}*/
 
 idea {
     module {
-        outputDir = file('build/classes/main')
+		outputDir = file('build/classes/main')
     }
 }

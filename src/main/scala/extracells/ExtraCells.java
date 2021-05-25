@@ -104,6 +104,5 @@ public class ExtraCells {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		integration.postInit();
-
 	}
 }

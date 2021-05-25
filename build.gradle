@@ -41,8 +41,8 @@ compileJava {
     sourceCompatibility = targetCompatibility = "1.8"
 }
 
-logger.lifecycle "$archivesBaseName-$version"
-logger.lifecycle "" + version
+/*logger.lifecycle "$archivesBaseName-$version"
+logger.lifecycle "" + version*/
 
 minecraft {
     version = "${config.version.minecraft}-${config.version.forge}"

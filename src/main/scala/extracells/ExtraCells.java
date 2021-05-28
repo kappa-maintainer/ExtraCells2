@@ -1,27 +1,8 @@
 package extracells;
 
-import com.google.common.base.Preconditions;
-
-import javax.annotation.Nullable;
-import java.io.File;
-
-import net.minecraft.util.datafix.FixTypes;
-
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.util.ModFixs;
-import net.minecraftforge.fluids.FluidRegistry;
-
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-
 import appeng.api.AEApi;
 import appeng.api.features.IRegistryContainer;
+import com.google.common.base.Preconditions;
 import extracells.integration.Integration;
 import extracells.item.storage.CellDefinition;
 import extracells.network.GuiHandler$;
@@ -33,6 +14,21 @@ import extracells.util.NameHandler;
 import extracells.util.datafix.BasicCellDataFixer;
 import extracells.util.datafix.PortableCellDataFixer;
 import extracells.wireless.AEWirelessTermHandler;
+import net.minecraft.util.datafix.FixTypes;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.util.ModFixs;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import javax.annotation.Nullable;
+import java.io.File;
 
 @Mod(modid = Constants.MOD_ID, version = Constants.VERSION, name = "Extra Cells", dependencies = "after:waila;required-after:appliedenergistics2")
 public class ExtraCells {
@@ -43,7 +39,7 @@ public class ExtraCells {
 	public static ExtraCells instance;
 
 	public static final Integration integration = new Integration();
-	public static int bcBurnTimeMultiplicator = 4;
+	//public static int bcBurnTimeMultiplicator = 4;
 	private File configFolder;
 
 	public ExtraCells() {

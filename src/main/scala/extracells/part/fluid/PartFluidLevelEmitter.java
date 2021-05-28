@@ -1,14 +1,33 @@
 package extracells.part.fluid;
 
+import appeng.api.config.RedstoneMode;
+import appeng.api.config.SecurityPermissions;
+import appeng.api.networking.IGridNode;
 import appeng.api.networking.security.IActionSource;
+import appeng.api.networking.storage.IStackWatcher;
+import appeng.api.networking.storage.IStackWatcherHost;
+import appeng.api.parts.IPart;
+import appeng.api.parts.IPartCollisionHelper;
+import appeng.api.parts.IPartModel;
 import appeng.api.storage.IStorageChannel;
+import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IAEStack;
+import appeng.api.storage.data.IItemList;
+import appeng.api.util.AECableType;
+import appeng.api.util.AEPartLocation;
 import com.google.common.collect.ImmutableList;
-
-import java.io.IOException;
-import java.util.Random;
-
 import extracells.api.gas.IAEGasStack;
+import extracells.container.fluid.ContainerFluidEmitter;
+import extracells.gui.fluid.GuiFluidEmitter;
+import extracells.gui.widget.fluid.IFluidSlotListener;
+import extracells.models.PartModels;
+import extracells.network.packet.other.PacketFluidSlotUpdate;
+import extracells.network.packet.part.PacketPartConfig;
+import extracells.part.PartECBase;
+import extracells.util.NetworkUtil;
+import extracells.util.PermissionUtil;
 import extracells.util.StorageChannels;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,40 +38,15 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import appeng.api.AEApi;
-import appeng.api.config.RedstoneMode;
-import appeng.api.config.SecurityPermissions;
-import appeng.api.networking.IGridNode;
-import appeng.api.networking.storage.IStackWatcher;
-import appeng.api.networking.storage.IStackWatcherHost;
-import appeng.api.parts.IPart;
-import appeng.api.parts.IPartCollisionHelper;
-import appeng.api.parts.IPartModel;
-import appeng.api.storage.data.IAEFluidStack;
-import appeng.api.storage.data.IAEStack;
-import appeng.api.storage.data.IItemList;
-import appeng.api.util.AECableType;
-import appeng.api.util.AEPartLocation;
-import extracells.container.fluid.ContainerFluidEmitter;
-import extracells.gui.fluid.GuiFluidEmitter;
-import extracells.gui.widget.fluid.IFluidSlotListener;
-import extracells.models.PartModels;
-import extracells.network.packet.other.PacketFluidSlotUpdate;
-import extracells.network.packet.part.PacketPartConfig;
-import extracells.part.PartECBase;
-import extracells.util.NetworkUtil;
-import extracells.util.PermissionUtil;
-import io.netty.buffer.ByteBuf;
+import java.io.IOException;
+import java.util.Random;
 
 public class PartFluidLevelEmitter extends PartECBase implements IStackWatcherHost, IFluidSlotListener {
-
 	protected Fluid selectedFluid;
 	private RedstoneMode mode = RedstoneMode.HIGH_SIGNAL;
 	private IStackWatcher watcher;
@@ -82,7 +76,7 @@ public class PartFluidLevelEmitter extends PartECBase implements IStackWatcherHo
 
 	@Override
 	public Object getClientGuiElement(EntityPlayer player) {
-		return new GuiFluidEmitter(this, player);
+		return new GuiFluidEmitter(this, player, isGas);
 	}
 
 	@Override
@@ -143,7 +137,6 @@ public class PartFluidLevelEmitter extends PartECBase implements IStackWatcherHo
 			onStackChangeGas((IAEGasStack) fullStack, (IAEGasStack) diffStack);
 		else if (chan == StorageChannels.FLUID() && diffStack != null && ((IAEFluidStack) diffStack).getFluid() == this.selectedFluid) {
 			this.currentAmount = fullStack != null ? fullStack.getStackSize() : 0;
-
 			IGridNode node = getGridNode();
 			if (node != null) {
 				setActive(node.isActive());
@@ -252,7 +245,6 @@ public class PartFluidLevelEmitter extends PartECBase implements IStackWatcherHo
 				this.mode = RedstoneMode.LOW_SIGNAL;
 				break;
 		}
-
 		notifyTargetBlock(getHostTile(), getFacing());
 		NetworkUtil.sendToPlayer(new PacketPartConfig(this, PacketPartConfig.FLUID_EMITTER_MODE, mode.toString()), player);
 		if (getHost() != null) {

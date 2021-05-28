@@ -1,6 +1,5 @@
 package extracells.integration.mekanism.gas;
 
-
 import appeng.api.config.FuzzyMode;
 import appeng.api.storage.data.IItemList;
 import extracells.api.gas.IAEGasStack;
@@ -8,7 +7,6 @@ import extracells.api.gas.IAEGasStack;
 import java.util.*;
 
 public class GasList implements IItemList<IAEGasStack>{
-
     private final Map<IAEGasStack, IAEGasStack> records = new HashMap<>();
 
     @Override
@@ -28,19 +26,14 @@ public class GasList implements IItemList<IAEGasStack>{
     public void addCrafting(IAEGasStack iaeGasStack) {
         if(iaeGasStack == null)
             return;
-
         IAEGasStack stack = this.getGasRecord(iaeGasStack);
-
-        if(stack != null)
-        {
+        if(stack != null) {
             stack.setCraftable(true);
             return;
         }
-
         IAEGasStack toAdd = iaeGasStack.copy();
         toAdd.setStackSize(0);
         toAdd.setCraftable(true);
-
         this.putGasRecord(toAdd);
     }
 
@@ -48,20 +41,15 @@ public class GasList implements IItemList<IAEGasStack>{
     public void addRequestable(IAEGasStack iaeGasStack) {
         if(iaeGasStack == null)
             return;
-
         IAEGasStack stack = this.getGasRecord(iaeGasStack);
-
-        if(stack != null)
-        {
+        if(stack != null) {
             stack.setCountRequestable(stack.getCountRequestable() + iaeGasStack.getCountRequestable());
             return;
         }
-
         IAEGasStack toAdd = iaeGasStack.copy();
         toAdd.setStackSize(0);
         toAdd.setCraftable(false);
         toAdd.setCountRequestable(iaeGasStack.getCountRequestable());
-
         this.putGasRecord(toAdd);
     }
 
@@ -86,7 +74,6 @@ public class GasList implements IItemList<IAEGasStack>{
     public void resetStatus() {
         for (IAEGasStack gasStack : this)
             gasStack.reset();
-
     }
 
     @Override
@@ -94,11 +81,12 @@ public class GasList implements IItemList<IAEGasStack>{
         if(iaeGasStack == null)
             return;
         IAEGasStack stack = this.getGasRecord(iaeGasStack);
-        if (stack != null){
+        if (stack != null) {
             stack.add(iaeGasStack);
+        } else {
+            IAEGasStack toAdd = iaeGasStack.copy();
+            this.putGasRecord(toAdd);
         }
-        IAEGasStack toAdd = iaeGasStack.copy();
-        this.putGasRecord(toAdd);
     }
 
     @Override
@@ -112,7 +100,6 @@ public class GasList implements IItemList<IAEGasStack>{
     public Collection<IAEGasStack> findFuzzy(IAEGasStack iaeGasStack, FuzzyMode fuzzyMode) {
         if(iaeGasStack == null)
             return Collections.emptyList();
-
         return Collections.singletonList(this.findPrecise(iaeGasStack));
     }
 
@@ -121,13 +108,11 @@ public class GasList implements IItemList<IAEGasStack>{
         return !this.iterator().hasNext();
     }
 
-    private IAEGasStack getGasRecord(IAEGasStack gas)
-    {
+    private IAEGasStack getGasRecord(IAEGasStack gas) {
         return this.records.get(gas);
     }
 
-    private IAEGasStack putGasRecord(IAEGasStack gas)
-    {
+    private IAEGasStack putGasRecord(IAEGasStack gas) {
         return this.records.put(gas, gas);
     }
 }

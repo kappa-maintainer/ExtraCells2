@@ -1,17 +1,5 @@
 package extracells.gui.fluid;
 
-import java.io.IOException;
-import java.util.List;
-
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fluids.Fluid;
-
-import org.lwjgl.input.Keyboard;
-
 import appeng.api.config.RedstoneMode;
 import extracells.container.fluid.ContainerFluidEmitter;
 import extracells.gui.GuiBase;
@@ -24,21 +12,30 @@ import extracells.network.packet.part.PacketPartConfig;
 import extracells.part.fluid.PartFluidLevelEmitter;
 import extracells.registries.PartEnum;
 import extracells.util.NetworkUtil;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
+import org.lwjgl.input.Keyboard;
+
+import java.io.IOException;
+import java.util.List;
 
 public class GuiFluidEmitter extends GuiBase<ContainerFluidEmitter> implements IFluidSlotGui {
-
 	//TODO: Clean Up / Add own Button Class
 	public static final String[] BUTTON_NAMES = {"-1", "-10", "-100", "+1", "+10", "+100"};
 	public static final String[] SHIFT_NAMES = {"-100", "-1000", "-10000", "+100", "+1000", "+10000"};
-
 	public static final int xSize = 176;
 	public static final int ySize = 166;
 	private DigitTextField amountField;
 	private PartFluidLevelEmitter part;
+	private Boolean isGasEmmiter;
 
-	public GuiFluidEmitter(PartFluidLevelEmitter part, EntityPlayer player) {
+	public GuiFluidEmitter(PartFluidLevelEmitter part, EntityPlayer player, Boolean isGas) {
 		super(new ResourceLocation("extracells", "textures/gui/levelemitterfluid.png"), new ContainerFluidEmitter(part, player));
 		this.part = part;
+		isGasEmmiter = isGas;
 		widgetManager.add(new WidgetFluidSlot(widgetManager, this.part, 79, 36));
 		NetworkUtil.sendToServer(new PacketPartConfig(this.part, PacketPartConfig.FLUID_EMITTER_TOGGLE, Boolean.toString(false)));
 	}
@@ -67,13 +64,12 @@ public class GuiFluidEmitter extends GuiBase<ContainerFluidEmitter> implements I
 			case 6:
 				NetworkUtil.sendToServer(new PacketPartConfig(part, PacketPartConfig.FLUID_EMITTER_TOGGLE, Boolean.toString(true)));
 				break;
-
 		}
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		this.fontRenderer.drawString(PartEnum.FLUIDLEVELEMITTER.getStatName(), 5, 5, 0x000000);
+		this.fontRenderer.drawString((isGasEmmiter ? PartEnum.GASLEVELEMITTER :	PartEnum.FLUIDLEVELEMITTER).getStatName(), 5, 5, 0x000000);
 	}
 
 	@Override
@@ -83,14 +79,12 @@ public class GuiFluidEmitter extends GuiBase<ContainerFluidEmitter> implements I
 				break;
 			}
 			GuiButton currentButton = this.buttonList.get(i);
-
 			if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
 				currentButton.displayString = SHIFT_NAMES[i] + "mB";
 			} else {
 				currentButton.displayString = BUTTON_NAMES[i] + "mB";
 			}
 		}
-
 		super.drawScreen(x, y, f);
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();

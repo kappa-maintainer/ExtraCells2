@@ -53,7 +53,7 @@ minecraft {
 }
 
 repositories {
-	maven {
+    maven {
         name = "Hwyla"
         url "https://maven.tehnut.info/"
     }
@@ -88,7 +88,7 @@ repositories {
 }
 
 dependencies {
-	deobfCompile "cofh:RedstoneFlux:${config.version.rf}:universal"
+    deobfCompile "cofh:RedstoneFlux:${config.version.rf}:universal"
     deobfCompile "p455w0rd:AE2WTLib:${config.version.ae2wtlib}"
     deobfCompile "p455w0rd:p455w0rdslib:${config.version.p455w0rdslib}"
     deobfCompile "p455w0rd:WirelessCraftingTerminal:${config.version.wct}"
@@ -143,24 +143,24 @@ task apiJar(type: Jar) {
 }
 
 if (System.getenv("CURSEFORGE_API_KEY") != null) {
-	curseforge {
-		apiKey = System.getenv("CURSEFORGE_API_KEY")
-		project {
-			id = config.cf.project.id
-			addGameVersion config.version.minecraft
-			changelog = file('changelog.txt')
-			releaseType = config.cf.project.type
-			relations {
-				requiredLibrary 'applied-energistics-2'
-			}
-			addArtifact(apiJar) {
-				releaseType = 'alpha'
-			}
-			mainArtifact(jar) {
-				displayName = "$archivesBaseName-${config.version.minecraft}-${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}"
-			}
-		}
-	}
+    curseforge {
+        apiKey = System.getenv("CURSEFORGE_API_KEY")
+        project {
+            id = config.cf.project.id
+            addGameVersion config.version.minecraft
+            changelog = file('changelog.txt')
+            releaseType = config.cf.project.type
+            relations {
+                requiredLibrary 'applied-energistics-2'
+            }
+            addArtifact(apiJar) {
+                releaseType = 'alpha'
+            }
+            mainArtifact(jar) {
+                displayName = "$archivesBaseName-${config.version.minecraft}-${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}"
+            }
+        }
+    }
 }
 
 artifacts {
@@ -182,6 +182,6 @@ artifacts {
 
 idea {
     module {
-		outputDir = file('build/classes/main')
+        outputDir = file('build/classes/main')
     }
 }
